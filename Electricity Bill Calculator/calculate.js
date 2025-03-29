@@ -17,12 +17,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Validate inputs
         if (meterReading === "") {
-            meterReadingError.textContent = "Meter reading cannot be empty";
+            meterReadingError.textContent = "Please enter your meter reading";
             return;
         }
 
         if (previousReading === "") {
-            previousReadingError.textContent = "Previous reading cannot be empty";
+            previousReadingError.textContent = "Please enter your previous reading";
             return;
         }
 
@@ -35,16 +35,19 @@ document.addEventListener("DOMContentLoaded", () => {
         // Calculate total amount
         const totalAmount = calculateTotalBill(mcbAmphere, consumption);
 
-        // Display total bill and unit
+        // Display total amount
         document.querySelector("#totalUnit").textContent = `Total Unit consumed: ${consumption} KWh`;
         document.querySelector("#totalAmount").textContent = `Total Amount: NPR ${totalAmount}`;
-
     });
 });
 
-/**
- * Function to get service charge based on MCB Amphere
- */
+function calculateTotalBill(mcbAmphere, consumption) {
+    const serviceCharge = getServiceCharge(mcbAmphere, consumption);
+    const energyCharge = getEnergyCharge(mcbAmphere, consumption);
+
+    return serviceCharge + (energyCharge * consumption);
+}
+
 function getServiceCharge(mcbAmphere, consumption) {
     const serviceChargeRates = {
         "5": [30, 50, 75, 100, 125, 150, 175],
@@ -56,9 +59,6 @@ function getServiceCharge(mcbAmphere, consumption) {
     return determineCharge(serviceChargeRates[mcbAmphere], consumption);
 }
 
-/**
- * Function to get energy charge based on MCB Amphere
- */
 function getEnergyCharge(mcbAmphere, consumption) {
     const energyChargeRates = {
         "5": [3, 7, 8.5, 10, 11, 12, 13],
@@ -70,9 +70,6 @@ function getEnergyCharge(mcbAmphere, consumption) {
     return determineCharge(energyChargeRates[mcbAmphere], consumption);
 }
 
-/**
- * Function to determine the appropriate charge based on consumption range
- */
 function determineCharge(rateArray, consumption) {
     if (consumption <= 20) return rateArray[0];
     if (consumption <= 30) return rateArray[1];
@@ -80,15 +77,5 @@ function determineCharge(rateArray, consumption) {
     if (consumption <= 150) return rateArray[3];
     if (consumption <= 250) return rateArray[4];
     if (consumption <= 400) return rateArray[5];
-    return rateArray[6]; // Above 400
-}
-
-/**
- * Function to calculate total electricity bill
- */
-function calculateTotalBill(mcbAmphere, consumption) {
-    const serviceCharge = getServiceCharge(mcbAmphere, consumption);
-    const energyCharge = getEnergyCharge(mcbAmphere, consumption);
-
-    return serviceCharge + (consumption * energyCharge);
+    return rateArray[6]; // Above 400    
 }

@@ -11,6 +11,11 @@
     border-radius: 5px;
 }
 
+h2 {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
 #mcb-Amphere {
     width: 100%;
     height: 40px;
